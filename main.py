@@ -29,7 +29,7 @@ def send_telegram_message(text: str):
 
 while True:
     try:
-        response = requests.get(URL)
+        response = requests.get(API_URL)
         response.raise_for_status()
         data = response.json()
     except requests.RequestException as e:
