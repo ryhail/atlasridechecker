@@ -2,7 +2,6 @@ import os
 import sys
 import requests
 from datetime import datetime
-from time import sleep
 import asyncio
 from aiohttp import web
 
@@ -11,8 +10,8 @@ API_URL = os.getenv("API_URL")
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 THRESHOLD_DATE_STR = os.getenv("THRESHOLD_DATE")
-CHECK_INTERVAL = int(os.getenv("CHECK_INTERVAL", "30"))
-PORT = int(os.getenv("PORT", "8080"))  # Render передаёт свой порт
+CHECK_INTERVAL = int(os.getenv("CHECK_INTERVAL", "60"))
+PORT = int(os.getenv("PORT", "8080"))
 
 if not all([API_URL, BOT_TOKEN, CHAT_ID, THRESHOLD_DATE_STR]):
     print("[ERROR] Не заданы переменные окружения.", file=sys.stderr)
@@ -64,14 +63,12 @@ def check_and_notify():
     else:
         print("Свободных поездок не найдено.")
 
-# === Фоновая задача ===
 async def background_loop():
     while True:
         print("[INFO] Запуск проверки...")
         check_and_notify()
         await asyncio.sleep(CHECK_INTERVAL)
 
-# === HTTP-сервер для Render (чтобы не выключался) ===
 async def handle_health(request):
     return web.Response(text="OK")
 
